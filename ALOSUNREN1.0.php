@@ -7,7 +7,7 @@
 		>
 		>ALOSUNREN Version : v.1.0
 		>Known Vuln : NULL
-		>Known Bug : NULL
+		>Known Bug : DBinsert Error While Inputing Multyple Value Fix Is Ongoing
 		>Made By : Fabian Augie
 		>
 		>LoadALOSUNRENFunctionList_|
