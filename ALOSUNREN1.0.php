@@ -8,6 +8,7 @@
 		>ALOSUNREN Version : v.1.0
 		>Known Vuln : NULL
 		>Known Bug : NULL
+		>Made By : Fabian Augie
 		>
 		>LoadALOSUNRENFunctionList_|
 		>
