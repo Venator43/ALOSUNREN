@@ -5,10 +5,10 @@
 		>
 		>Loading Info.......
 		>
-		>ALOSUNREN Version : v.1.0
+		>ALOSUNREN Version : v.1.3
+		>>Made By : Fabian Augie
 		>Known Vuln : NULL
-		>Known Bug : DBinsert Error While Inputing Multyple Value Fix Is Ongoing
-		>Made By : Fabian Augie
+		>Known Bug : NULL
 		>
 		>LoadALOSUNRENFunctionList_|
 		>
@@ -29,11 +29,14 @@
 			@UserSession(login_page):Session Set
 			@UserLogin(login_table,user_row,password_row,input_name_user,input_name_pass,welcome_page):Login Function
 			@UserAdd(table_name,username_inputname,password_inputname,row_name,cost_value):Add a new user + hash password with BCRYPT
+			@UserLogout():Logout Function
 			@CRUD function:
 			@DBinsert(table_name,row_name,value):Input data to MySQL record
 			@DBselect(table_name,row(s)_name,where_statment(optional)):Select data from MySQL table 
 			@DBupdate(table_name,row_name,value,where_argument):Update data in MySQL database
 			@DBdelete(table_name,where_argument):Delete data in MySQL database
+			Usefull Function:
+			@DBcount(table_name):Count row in MySQL Table
 		>
 	*/
 
@@ -50,18 +53,15 @@
 	}
 	function DBinsert($table,$row,$iname)
 	{
-		$value = mysqli_real_escape_string($GLOBALS['conn'],$iname);
-		$sql = "INSERT INTO $table ($row) VALUES ('$value')";
+		$field_values= implode(',',$row);
+    	$data_values=implode("','",$iname);
+		$truevalue = mysqli_real_escape_string($GLOBALS['conn'],$field_values);
+		$sql = "INSERT INTO $table (".$truevalue.") VALUES ('$data_values')";
 
 		
 		if(!mysqli_query($GLOBALS['conn'], $sql))
 		{
-			return FALSE;
     		echo "Error: " . $sql . "<br>" . mysqli_error($GLOBALS['conn']);
-		}
-		else
-		{
-			return TRUE;
 		}
 	}
 	function DBselect($table,$row,$where = "'1' = '1'")
@@ -81,13 +81,15 @@
 		$sql = "UPDATE $table SET $row='$truevalue' WHERE $where";
 
 		if (!mysqli_query($GLOBALS['conn'], $sql)) {
-    		echo "Error updating record: " . mysqli_error($conn);
-    		return FALSE;
+    		echo "Error updating record: " . mysqli_error($GLOBALS['conn']);
 		}
-		else 
-		{
-    		return TRUE;
-		}
+	}
+	function DBcount($table)
+	{
+		$result = mysqli_query($GLOBALS['conn'],"SELECT * FROM $table");
+		$num_rows = mysqli_num_rows($result);
+
+		return $num_rows;
 	}
 	function DBdelete($table,$where)
 	{
@@ -95,12 +97,7 @@
 
 		if (!mysqli_query($GLOBALS['conn'], $sql)) 
 		{
-			return FALSE;
     		echo "Error: " . $sql . "<br>" . mysqli_error($GLOBALS['conn']);
-		}
-		else
-		{
-			return TRUE;
 		}
 	}
 	function UserLogin($table,$rname,$rpass,$uname,$pass,$url)
@@ -141,6 +138,10 @@
 		{
     		echo "<script>alert('Your Login Name or Password is invalid');</script>";
 		}
+	}
+	function UserLogout()
+	{
+		session_destroy();
 	}
 	function UserSession($lpage)
 	{
@@ -238,7 +239,7 @@
 					move_uploaded_file($file_tmp,$fdict . "/"		// |
 					. $file_name);									// |
 					unlink($fdict . "/test.txt");		            // |
-			        echo "Success";								    // |
+			        echo "Success";return $file_name;				// |
 				}													//  \
 				else 												//   > Filter
 				{													//  /
